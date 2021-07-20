@@ -1,0 +1,39 @@
+plugins {
+    id 'java'
+    id 'application'
+}
+
+group 'org.example'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
+    compile 'com.solacesystems:sol-jcsmp:10.11.0'
+    compile 'com.google.code.gson:gson:2.8.7'
+    compile 'org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.1.0'
+}
+
+test {
+    useJUnitPlatform()
+}
+
+
+jar {
+    manifest {
+        attributes "Main-Class": "ChucksPrints.main"
+    }
+
+    from {
+        configurations.compile.collect {it.isDirectory() ? it : zipTree{it}
+        }
+    }
+}
+
+application {
+    mainClassName = 'ChucksPrints.main'
+}
