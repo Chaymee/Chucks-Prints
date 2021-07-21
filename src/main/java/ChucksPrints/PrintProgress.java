@@ -15,6 +15,16 @@ public class PrintProgress implements Runnable {
     String topic;
     int printerNum;
 
+    // Overloaded constructor for building message to publish
+    public PrintProgress(Double progress) {
+        this.progress = progress;
+    }
+
+    // Setter to fill out progress as print progresses
+    public void setProgress(Double progress) {
+        this.progress = progress;
+    }
+
     // Topic is not a part of the json payload for a progress/printing event.  I manually set the topic so that I can
     //  parse it later to get the printer number.
     public void setTopic(String topic) {

@@ -1,16 +1,18 @@
+ChucksPrints/PrintStarted.java
+ ChucksPrints.PrintStarted
 ChucksPrints/DirectSubscriber.java
  ChucksPrints.DirectSubscriber
  ChucksPrints.DirectSubscriber$1
  ChucksPrints.DirectSubscriber$2
-ChucksPrints/BasicSubscriber.java
- ChucksPrints.BasicSubscriber
- ChucksPrints.BasicSubscriber$1
-ChucksPrints/PrintStarted.java
- ChucksPrints.PrintStarted
 ChucksPrints/PrintProgress.java
  ChucksPrints.PrintProgress
 ChucksPrints/MQTTDirectSubscriber.java
  ChucksPrints.MQTTDirectSubscriber
  ChucksPrints.MQTTDirectSubscriber$1
+ChucksPrints/PrinterSimulator.java
+ ChucksPrints.PrinterSimulator
+ChucksPrints/BasicSubscriber.java
+ ChucksPrints.BasicSubscriber
+ ChucksPrints.BasicSubscriber$1
 ChucksPrints/main.java
  ChucksPrints.main

@@ -33,3 +33,5 @@ build/distributions/Chucks-Prints-1.0-SNAPSHOT.tar
 .gradle/checksums/checksums.lock
 .idea/gradle.xml
 build/libs/.DS_Store
+*.bin
+*.bin

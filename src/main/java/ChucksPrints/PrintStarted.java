@@ -19,6 +19,12 @@ public class PrintStarted implements Runnable{
     String topic;
     int printerNum;
 
+    // Overloaded constructor used to make messages for publishing
+    public PrintStarted(String name, String path ) {
+        this.name = name;
+        this.path = path;
+    }
+
     // topic is not part of the json payload so I manually set the topic for an object of the printStarted class
     //  Later I can parse this topic to figure out what printer it came from
     public void setTopic(String topic) {

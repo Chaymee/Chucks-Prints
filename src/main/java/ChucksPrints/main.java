@@ -5,6 +5,8 @@ import com.solacesystems.jcsmp.JCSMPException;
 
 import java.io.IOException;
 import java.util.Scanner;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 
 class main {
@@ -18,17 +20,21 @@ class main {
     private static String vpnname = "";
     private static String password = "admin";
     private static String topic = "octoprint/#";
+    private static ExecutorService executorService;
+    private static int printerNum;
+    private static int numberOfPrints;
 
     public static void main(String[] args) {
 
 
+        // Setup threads to handle certain events
+        executorService = Executors.newFixedThreadPool(10);
 
 
         // Prompt user to enter selection for which application they would like to start
         // Parse std in to get their selection and spin it off to a new thread.
-
         Scanner stdin = new Scanner(System.in);
-        int userAction;
+        int userAction = 0;
 
         System.out.println("*************************************");
         System.out.println("Welcome to Chucks Prints POC Client.");
@@ -79,12 +85,17 @@ class main {
                 break;
             case 4:
                 System.out.println("  Printer Simulator requested");
-                System.out.println("!!! This functionality has not yet been developed. It is in progress !!!");
-
+                System.out.println("Please key in the number of this simulated printer (between 2 and 9) then press enter: ");
+                printerNum = stdin.nextInt();
+                System.out.println("Please key in the number of prints you would like to simulate on this printer: ");
+                numberOfPrints = stdin.nextInt();
+                PrinterSimulator printerSimulator = new PrinterSimulator(host, username, password, printerNum, numberOfPrints);
+                executorService.execute(printerSimulator);
                 break;
             case 5:
                 System.out.println("  Power Simulator requested");
                 System.out.println("!!! This functionality has not yet been developed. It is included as inspiration !!!");
+
                 break;
             case 6:
                 System.out.println("  Exit requested");
