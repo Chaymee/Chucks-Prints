@@ -5,17 +5,12 @@ ChucksPrints/DirectSubscriber.java
 ChucksPrints/BasicSubscriber.java
  ChucksPrints.BasicSubscriber
  ChucksPrints.BasicSubscriber$1
-ChucksPrints/mqttSubscriber.java
- ChucksPrints.mqttSubscriber
- ChucksPrints.mqttSubscriber$1
+ChucksPrints/PrintStarted.java
+ ChucksPrints.PrintStarted
 ChucksPrints/PrintProgress.java
  ChucksPrints.PrintProgress
-ChucksPrints/ProcessMQTT.java
- ChucksPrints.ProcessMQTT
 ChucksPrints/MQTTDirectSubscriber.java
  ChucksPrints.MQTTDirectSubscriber
  ChucksPrints.MQTTDirectSubscriber$1
 ChucksPrints/main.java
  ChucksPrints.main
-ChucksPrints/PrintStarted.java
- ChucksPrints.PrintStarted

@@ -21,3 +21,15 @@
 
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
+build/distributions/Chucks-Prints-1.0-SNAPSHOT.tar
+.gradle/6.8/executionHistory/executionHistory.bin
+.gradle/6.8/executionHistory/executionHistory.lock
+.gradle/6.8/fileHashes/fileHashes.bin
+.gradle/6.8/fileHashes/fileHashes.lock
+.gradle/6.8/fileHashes/resourceHashesCache.bin
+.gradle/6.8/javaCompile/classAnalysis.bin
+.gradle/6.8/javaCompile/javaCompile.lock
+.gradle/buildOutputCleanup/buildOutputCleanup.lock
+.gradle/checksums/checksums.lock
+.idea/gradle.xml
+build/libs/.DS_Store

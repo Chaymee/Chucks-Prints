@@ -27,11 +27,13 @@ jar {
     manifest {
         attributes "Main-Class": "ChucksPrints.main"
     }
-
+/*
     from {
         configurations.compile.collect {it.isDirectory() ? it : zipTree{it}
         }
+
     }
+    */
 }
 
 application {

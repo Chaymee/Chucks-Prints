@@ -67,11 +67,11 @@ goto fail
 :execute
 @rem Setup the command line
 
-set CLASSPATH=%APP_HOME%\lib\Chucks-Prints-1.0-SNAPSHOT.jar
+set CLASSPATH=%APP_HOME%\lib\Chucks-Prints-1.0-SNAPSHOT.jar;%APP_HOME%\lib\sol-jcsmp-10.11.0.jar;%APP_HOME%\lib\gson-2.8.7.jar;%APP_HOME%\lib\org.eclipse.paho.client.mqttv3-1.1.0.jar;%APP_HOME%\lib\commons-logging-1.1.3.jar;%APP_HOME%\lib\commons-lang-2.6.jar;%APP_HOME%\lib\org.osgi.annotation-6.0.0.jar;%APP_HOME%\lib\org.apache.servicemix.bundles.jzlib-1.0.7_2.jar
 
 
 @rem Execute Chucks-Prints
-"%JAVA_EXE%" %DEFAULT_JVM_OPTS% %JAVA_OPTS% %CHUCKS_PRINTS_OPTS%  -classpath "%CLASSPATH%" Chucks-Prints %*
+"%JAVA_EXE%" %DEFAULT_JVM_OPTS% %JAVA_OPTS% %CHUCKS_PRINTS_OPTS%  -classpath "%CLASSPATH%" ChucksPrints.main %*
 
 :end
 @rem End local scope for the variables with windows NT shell

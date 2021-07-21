@@ -1,13 +1,3 @@
-
-
-/*
-A version of the subscriber in direct subscriber format.
-Based on Solace sample from https://github.com/SolaceSamples/solace-samples-java-jcsmp/blob/dbbd13a7af12da84d1215af8b1ce9c8b9d30e588/src/main/java/com/solace/samples/jcsmp/patterns/DirectSubscriber.java
-
-Initially used for ease of use in testing and development.
-May change subscriber strategy depending on requirements.
- */
-
 package ChucksPrints;
 
 import com.google.gson.JsonParseException;
@@ -26,6 +16,15 @@ import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+
+
+
+/*
+A version of the Paho MQTT subscriber in direct subscriber format.
+
+Initially used for ease of use in testing and development.
+May change subscriber strategy depending on requirements.
+ */
 
 public class MQTTDirectSubscriber implements Runnable{
 
@@ -51,6 +50,7 @@ public class MQTTDirectSubscriber implements Runnable{
         this.topic = topic;
     }
 
+    // Method to start a new thread to run this module
     public void run(){
         
         System.out.println("Initializing connection to broker at " + host );
@@ -59,6 +59,10 @@ public class MQTTDirectSubscriber implements Runnable{
         executorService = Executors.newFixedThreadPool(4);
 
 
+        // Create or open log file to keep track of all messages coming into the subscriber.
+        // In this particular case I am subscribing to all topics and treating this file as a database simulation
+        // This process could be replaced by a different application that would actually receive every message,
+        // format the messages into the desired schema and store them into the database.
         try {
             topicLog = new File("MQTTDirectSubscriberTopic.log");
             if(topicLog.createNewFile()) {
@@ -81,12 +85,15 @@ public class MQTTDirectSubscriber implements Runnable{
             connOpts.setCleanSession(true);
             connOpts.setUserName(username);
             connOpts.setPassword(password.toCharArray());
+            // Could add TLS to this broker and subscriber if it was moving out of testing phase.
 
             // Connect the client
             System.out.println("Connecting to Solace messaging at "+host);
             mqttClient.connect(connOpts);
             System.out.println("Connected");
 
+
+            // MQTT uses callback instead of having to poll the broker continuously to check for new messages
             mqttClient.setCallback(new MqttCallback() {
                 @Override
                 public void connectionLost(Throwable cause) {
@@ -97,31 +104,40 @@ public class MQTTDirectSubscriber implements Runnable{
                 @Override
                 public void messageArrived(String topic, MqttMessage message) throws Exception {
                     String msgTime = new Timestamp(System.currentTimeMillis()).toString();
+                    // Place message into log file.
                     logger.write("\nRecieved new message:\n" +
                             "\tTime recieved:     " + msgTime +
                             "\n\tTopic:           " + topic +
                             "\n\tMessage:         " + new String(message.getPayload()) +
                             "\n\tQos:             " + message.getQos() + "\n");
                     logger.flush();
-                    Gson gson = new Gson();
-                    // Use executorservice to process these incoming messages.
-                    if (topic.matches( "octoprint/printer\\d/progress/printing")) {
 
+                    // Create gson object to convert json payloads to java objects.
+                    Gson gson = new Gson();
+
+                    // Because I am slightly misusing this subscriber (by subscribing at such a high level to topics
+                    //  I need to check for certain topics before performing an action with an incoming event.
+
+                    if (topic.matches("octoprint/printer\\d/event/PrintStarted")) {
+                        // Here I use regex to select PrintStarted messages from all printers (between 0 and 9)
                         try {
-                            System.out.println("Handling print progress event");
-                            PrintProgress printProgressObject = gson.fromJson(new String(message.getPayload()), PrintProgress.class);
-                            printProgressObject.Process();
+                            // Process print started event.
+                            // Strange behavior - the printStarted event occurs after the print progress zero percent event
+                            PrintStarted printStartedObject = gson.fromJson(new String(message.getPayload()), PrintStarted.class);
+                            printStartedObject.setTopic(topic);
+                            executorService.execute(printStartedObject);
                         } catch (JsonParseException e) {
                             e.printStackTrace();
                         }
+                    } else if (topic.matches("octoprint/printer\\d/progress/printing")) {
+                        // Here I use regex to select print progress messages from all printers (between 0 and 9)
 
-                    } else if(topic.matches("octoprint/printer\\d/event/PrintStarted")) {
-                        System.out.println("Handling print Started event");
                         try {
-                            PrintStarted printStartedObject = gson.fromJson(new String(message.getPayload()), PrintStarted.class);
-                            printStartedObject.setTopic(topic);
-                            printStartedObject.Process();
-
+                            // Process print progress event.
+                            // Strange behavior - the zero progress event occurs before the print started event.
+                            PrintProgress printProgressObject = gson.fromJson(new String(message.getPayload()), PrintProgress.class);
+                            printProgressObject.setTopic(topic);
+                            executorService.execute(printProgressObject);
                         } catch (JsonParseException e) {
                             e.printStackTrace();
                         }
@@ -130,7 +146,8 @@ public class MQTTDirectSubscriber implements Runnable{
 
                 @Override
                 public void deliveryComplete(IMqttDeliveryToken token) {
-
+                    // Inside this method I could perform some action to confirm that I received an event from the broker
+                    //  I am delivering events in format 0 so no confirmation is required.
                 }
             });
 
@@ -139,15 +156,9 @@ public class MQTTDirectSubscriber implements Runnable{
             mqttClient.subscribe(topic, 0);
             System.out.println("Subscribed");
 
-// endless loop runs till we say stop of we get an I/O interrupt from system (I will remove I/O interrupt option)
+            // endless loop runs till we say stop of we get an I/O interrupt from system (I will remove I/O interrupt option)
             while (System.in.available() == 0 && !isShutdown) {
 
-
-                if (hasDetectedDiscard) {
-                    System.out.println("*** Egress discard detected ***: "
-                            + topic + " unable to keep up with full message rate");
-                    hasDetectedDiscard = false;
-                }
             }
             isShutdown = true;
             mqttClient.disconnect();

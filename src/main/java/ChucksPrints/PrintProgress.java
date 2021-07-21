@@ -1,21 +1,35 @@
 package ChucksPrints;
 
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import com.google.gson.annotations.SerializedName;
 
-import java.sql.Time;
-import java.util.HashMap;
-import java.util.List;
-
-public class PrintProgress {
+/**
+ * PrintProgress class implements Runnable so that its run method can be called by executorservice to complete work
+ *  in a new thread from the threadpool
+ *
+ *  PrintProgress class data represents the json paylod from a /progress/printing topic message
+ */
+public class PrintProgress implements Runnable {
     String location;
     String path;
     Double progress;
     Double timestamp;
+    String topic;
+    int printerNum;
 
-    public void Process() {
+    // Topic is not a part of the json payload for a progress/printing event.  I manually set the topic so that I can
+    //  parse it later to get the printer number.
+    public void setTopic(String topic) {
+        this.topic = topic;
+    }
 
+    /**
+     * Basic run function for printProgress that can be called by executorservice.
+     *
+     * This would be the location for logic to update an office billboard or publish an alert via slack or email.
+     */
+    @Override
+    public void run() {
+        printerNum = Integer.parseInt(topic.substring(17,18));
+        System.out.println(" Printer " + printerNum + " print progress: " + progress + "%");
     }
 }
     /* Extended version of the PrintProgress messages.

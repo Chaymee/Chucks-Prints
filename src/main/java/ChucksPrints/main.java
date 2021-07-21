@@ -1,28 +1,34 @@
 package ChucksPrints;
 
-import com.solacesystems.jcsmp.*;
+
+import com.solacesystems.jcsmp.JCSMPException;
 
 import java.io.IOException;
 import java.util.Scanner;
-import java.util.concurrent.CountDownLatch;
 
 
 class main {
 
+    // Graceful shutdown var shared across thread memory
+    public volatile Boolean isShutdown = false;
+
+
+    private static String host = "tcp://192.168.1.11";
+    private static String username = "admin";
+    private static String vpnname = "";
+    private static String password = "admin";
+    private static String topic = "octoprint/#";
 
     public static void main(String[] args) {
 
-        String host = "tcp://192.168.1.11";
-        String username = "admin";
-        String vpnname = "";
-        String password = "admin";
-        String topic = "octoprint/#";
+
+
 
         // Prompt user to enter selection for which application they would like to start
         // Parse std in to get their selection and spin it off to a new thread.
 
         Scanner stdin = new Scanner(System.in);
-        int userAction = 0;
+        int userAction;
 
         System.out.println("*************************************");
         System.out.println("Welcome to Chucks Prints POC Client.");
@@ -35,9 +41,11 @@ class main {
         System.out.println("   4. Printer Simulator - Publish MQTT with Paho.");
         System.out.println("   5. Power simulator - Publish with JCSMP");
         System.out.println("   6. Exit - end all tasks and shut down gracefully");
-        userAction = Integer.parseInt(stdin.nextLine());
+        userAction = Integer.parseInt(stdin.next());
         System.out.printf("Recieved request for action: %d from user.\n", userAction);
 
+
+        // Determine which user action was selected
         switch (userAction) {
             case 1:
                 System.out.println("Starting Printer Monitor, please enter topic. Leave blank for default topic: ");
@@ -46,11 +54,13 @@ class main {
                 if (!tempin.isBlank())
                     topic = tempin;
                 System.out.println("Topic: " + topic);
+                // Create a new thread to run the selected task for fun.
                 Runnable mqttDirectSubscriber1 = new MQTTDirectSubscriber(host, username, password, topic);
-
                 new Thread(mqttDirectSubscriber1).start();
                 break;
             case 2:
+                System.out.println("You have selected option 2: Power Usage analysis with JCSMP.");
+                System.out.println("!!! This functionality is not yet completely implemented.");
                 DirectSubscriber directSubscriber = new DirectSubscriber();
                 try {
                     directSubscriber.run(host, vpnname, username, password);
@@ -62,20 +72,25 @@ class main {
                     e.printStackTrace();
                 }
                 break;
+            // Extra program modes to provide inspiration.  I probably will never implement these
             case 3:
-                System.out.println("  Power Usage report requested");
+                System.out.println("  Resource report requested");
+                System.out.println("!!! This functionality has not yet been developed. It is included as inspiration !!!");
                 break;
             case 4:
                 System.out.println("  Printer Simulator requested");
+                System.out.println("!!! This functionality has not yet been developed. It is in progress !!!");
+
                 break;
             case 5:
                 System.out.println("  Power Simulator requested");
+                System.out.println("!!! This functionality has not yet been developed. It is included as inspiration !!!");
                 break;
             case 6:
                 System.out.println("  Exit requested");
                 System.exit(0);
             default:
-                System.out.println(" No action requested, you will be prompted again.");
+                System.out.println(" No action requested, exiting.");
                 break;
         }
     }

@@ -1,12 +1,13 @@
 package ChucksPrints;
 
-/* Data layout for PrintStarted events
 
+/**
+ * PrintStarted class implements Runnable so that its run method can be called by executor service to complete work
+ *  in a new thread from the threadpool
+ *
+ * PrintStarted data represents the json layout for an event pushed to the /event/PrintStarted topic
  */
-
-import java.sql.Time;
-
-public class PrintStarted {
+public class PrintStarted implements Runnable{
     String name;
     String path;
     String origin;
@@ -16,15 +17,23 @@ public class PrintStarted {
     String _event;
     int _timestamp;
     String topic;
+    int printerNum;
 
+    // topic is not part of the json payload so I manually set the topic for an object of the printStarted class
+    //  Later I can parse this topic to figure out what printer it came from
     public void setTopic(String topic) {
         this.topic = topic;
     }
 
 
-    public void Process() {
-            System.out.println("Starting to print " + this.name + " from " + this.path + " on topic " + this.topic);
 
+    // Basic run function to take the incoming event what was converted from json to java object and provide
+    //  an alert to the user.  At this point you would add business logic to update some office billboard or
+    //  send a slack message or email or some other form of alert or update
+    @Override
+    public void run() {
+        printerNum = Integer.parseInt(topic.substring(17,18));
+        System.out.println("Printer " + printerNum + ": Starting to print " + this.name + " from " + this.path + " on topic " + this.topic);
 
     }
 };
